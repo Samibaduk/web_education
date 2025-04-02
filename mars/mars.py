@@ -315,7 +315,7 @@ def carousel():
 def prof():
     profs = ['инженер-исследователь', 'пилот', 'строитель', 'экзобиолог', 'врач', 'инженер по терраформированию',
              'климатолог']
-    return render_template('prof.html', title='Список профессий', list='pkpok', profs=profs)
+    return render_template('prof.html', title='Список профессий', list='ul', profs=profs)
 
 
 @app.route('/answer')
@@ -345,6 +345,16 @@ def login():
         return redirect('/success')
     return render_template('login.html', style=url_for('static', filename='css/style.css'), title='Аварийный доступ',
                            form=form)
+
+
+@app.route('/distribution')
+def rooms():
+    form = LoginForm()
+    if form.validate_on_submit():
+        return redirect('/success')
+    params = {'title': 'По каютам!',
+              'team': ['Ридли Скотт', 'Энди Уир', 'Марк Уотни', 'Венката Капур', 'Тедди Сандерс', 'Шон Бин']}
+    return render_template('distrib.html', style=url_for('static', filename='css/style.css'), **params)
 
 
 if __name__ == '__main__':

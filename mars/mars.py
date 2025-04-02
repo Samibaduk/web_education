@@ -349,12 +349,29 @@ def login():
 
 @app.route('/distribution')
 def rooms():
-    form = LoginForm()
-    if form.validate_on_submit():
-        return redirect('/success')
     params = {'title': 'По каютам!',
               'team': ['Ридли Скотт', 'Энди Уир', 'Марк Уотни', 'Венката Капур', 'Тедди Сандерс', 'Шон Бин']}
     return render_template('distrib.html', style=url_for('static', filename='css/style.css'), **params)
+
+
+@app.route('/table/<sex>/<int:age>')
+def table(sex, age):
+    if age < 21:
+        pic = url_for('static', filename='img/child.jpeg')
+        if sex == 'male':
+            col = "aqua"
+        else:
+            col = "pink"
+    else:
+        pic = url_for('static', filename='img/adult.jpg')
+        if sex == 'male':
+            col = "blue"
+        else:
+            col = "red"
+    params = {'col': col,
+              'pic': pic,
+              'title': 'Оформление каюты'}
+    return render_template('table.html', style=url_for('static', filename='css/style.css'), **params)
 
 
 if __name__ == '__main__':

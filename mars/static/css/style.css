@@ -15,3 +15,7 @@ font-family: Arial;
  background-image: url('../img/MARS-2-7.png');
  background-size: cover;
 }
+
+td {
+font-size: 30px
+}

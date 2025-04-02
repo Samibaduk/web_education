@@ -1,18 +1,14 @@
 import io
-from flask import Flask, url_for, request
+from flask import Flask, url_for, request, render_template
 from PIL import Image
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def start():
-    return "Миссия Колонизация Марса"
-
-
 @app.route('/index')
 def index():
-    return "И на Марсе будут яблони цвести!"
+    return render_template('index.html', title='Заготовка')
 
 
 @app.route('/promotion')
@@ -311,6 +307,14 @@ def carousel():
                             </form>
                           </body>
                         </html>'''
+
+
+@app.route('/list_prof')
+def prof():
+    profs = ['инженер-исследователь', 'пилот', 'строитель', 'экзобиолог', 'врач', 'инженер по терраформированию',
+             'климатолог']
+    return render_template('prof.html', title='Список профессий', list='pkpok', profs=profs)
+
 
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1')

@@ -7,3 +7,11 @@ h5 {
 padding: 10px;
 font-family: Arial;
 }
+
+.icon-home {
+ width: 135px;
+ height: 45px;
+ float: left;
+ background-image: url('../img/MARS-2-7.png');
+ background-size: cover;
+}

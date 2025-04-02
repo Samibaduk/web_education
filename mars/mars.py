@@ -1,8 +1,10 @@
 import io
-from flask import Flask, url_for, request, render_template
+from flask import Flask, url_for, request, render_template, redirect
 from PIL import Image
+from classes import LoginForm
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 
 @app.route('/')
@@ -327,7 +329,22 @@ def answer():
               'sex': 'male',
               'motivation': 'Всегда мечтал застрять на Марсе!',
               'ready': 'True'}
-    return render_template('auto_answer.html',style=url_for('static', filename='css/style.css'),  **params)
+    return render_template('auto_answer.html', style=url_for('static', filename='css/style.css'), **params)
+
+
+@app.route('/success')
+def success():
+    form = LoginForm()
+    return render_template('success.html', style=url_for('static', filename='css/style.css'), title='Аварийный доступ')
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        return redirect('/success')
+    return render_template('login.html', style=url_for('static', filename='css/style.css'), title='Аварийный доступ',
+                           form=form)
 
 
 if __name__ == '__main__':

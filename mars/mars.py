@@ -316,5 +316,19 @@ def prof():
     return render_template('prof.html', title='Список профессий', list='pkpok', profs=profs)
 
 
+@app.route('/answer')
+@app.route('/auto_answer')
+def answer():
+    params = {'title': 'Анкета',
+              'surname': 'Wathy',
+              'name': 'Mark',
+              'education': 'выше среднего',
+              'profession': 'штурман марсохода',
+              'sex': 'male',
+              'motivation': 'Всегда мечтал застрять на Марсе!',
+              'ready': 'True'}
+    return render_template('auto_answer.html',style=url_for('static', filename='css/style.css'),  **params)
+
+
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1')

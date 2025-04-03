@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+from flask import url_for
+from wtforms import PasswordField, SubmitField, IntegerField, FileField
 from wtforms.validators import DataRequired
+from flask_wtf.file import FileRequired, FileAllowed
 
 
 class LoginForm(FlaskForm):
@@ -9,3 +11,8 @@ class LoginForm(FlaskForm):
     cap_id = IntegerField('id капитана', validators=[DataRequired()])
     cap_pas = PasswordField('Пароль капитана', validators=[DataRequired()])
     submit = SubmitField('Войти')
+
+
+class GalleryForm(FlaskForm):
+    image = FileField('Добавить картинку', validators=[FileRequired(), FileAllowed(['jpg', 'png'], 'Images only!')])
+    submit = SubmitField('Отправить')

@@ -1,7 +1,9 @@
 import io
 from flask import Flask, url_for, request, render_template, redirect
 from PIL import Image
-from classes import LoginForm
+import os
+from werkzeug.utils import secure_filename
+from classes import LoginForm, GalleryForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -342,7 +344,7 @@ def success():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        return redirect('/success')
+        return redirect('/success.html')
     return render_template('login.html', style=url_for('static', filename='css/style.css'), title='Аварийный доступ',
                            form=form)
 
@@ -372,6 +374,21 @@ def table(sex, age):
               'pic': pic,
               'title': 'Оформление каюты'}
     return render_template('table.html', style=url_for('static', filename='css/style.css'), **params)
+
+
+N = 4
+
+
+@app.route('/gallery', methods=['GET', 'POST'])
+def gallery():
+    global N
+    form = GalleryForm()
+    if form.validate_on_submit():
+        f = form.image.data
+        f.save(os.path.join('static/img', f'car{N + 1}.jpg'))
+        N += 1
+    pics = [url_for('static', filename=f'img/car{i + 1}.jpg') for i in range(N)]
+    return render_template('gallery.html', style=url_for('static', filename='css/style.css'), form=form, pics=pics)
 
 
 if __name__ == '__main__':

@@ -2,8 +2,7 @@ import io
 from flask import Flask, url_for, request, render_template, redirect
 from PIL import Image
 import os
-from werkzeug.utils import secure_filename
-from classes import LoginForm, GalleryForm
+from data.classes import LoginForm, GalleryForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'

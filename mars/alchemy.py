@@ -1,11 +1,16 @@
 from data import db_session
-# from data.users import User
+from data.users import User
 from data.jobs import Job
 
 db_session.global_init('../mars/db/mars_explorer.db')
 
+
 def main():
+    # db_session.global_init(input())
     db_sess = db_session.create_session()
+    for user in db_sess.query(User).filter(User.address == "module_1", "engineer" not in User.speciality,
+                                           "engineer" not in User.position):
+        print(user.id)
 
     # user = User()
     # user.name = "Scott"
@@ -51,16 +56,19 @@ def main():
     # db_sess.add(user)
     # db_sess.commit()
 
-    job = Job()
-    job.team_leader = 1
-    job.job = "deployment of residential modules 1 and 2"
-    job.work_size = "15"
-    job.collaborators = "2, 3"
-    job.is_finished = False
-    db_sess.add(job)
-    db_sess.commit()
-
+    # job = Job()
+    # job.team_leader = 1
+    # job.job = "deployment of residential modules 1 and 2"
+    # job.work_size = "15"
+    # job.collaborators = "2, 3"
+    # job.is_finished = False
+    # db_sess.add(job)
+    # db_sess.commit()
 
 
 if __name__ == '__main__':
     main()
+# global_init(input())
+# db_sess = create_session()
+# for job in db_sess.query(Job).filter(int(job.work_size) < 20, job.is_finished == 0):
+#     print(f'{job} {job.name} years')

@@ -140,7 +140,7 @@ def main():
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("close", close_keyboard))
 
-    text_handler = MessageHandler(filters.TEXT, echo)
+    text_handler = MessageHandler(filters.TEXT and ~filters.COMMAND, echo)
     application.add_handler(text_handler)
 
     # Запускаем приложение.

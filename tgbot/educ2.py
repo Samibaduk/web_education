@@ -1,4 +1,6 @@
 import logging
+from pyexpat.errors import messages
+
 from telegram.ext import Application, MessageHandler, filters, ConversationHandler
 from config import BOT_TOKEN
 from telegram.ext import CommandHandler
@@ -8,77 +10,73 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+AUTHOR = "Сергей Есенин"
+TITLE = "Берёза"
+POEM = ("""Белая берёза
+Под моим окном
+Принакрылась снегом,
+Точно серебром.
+На пушистых ветках
+Снежною каймой
+Распустились кисти
+Белой бахромой.
+И стоит берёза
+В сонной тишине,
+И горят снежинки
+В золотом огне.
+А заря, лениво
+Обходя кругом,
+Обсыпает ветки
+Новым серебром.""").split('\n')
+
 
 async def start(update, context):
     await update.message.reply_text(
-        "Привет. Добро пожаловать в музей!\n"
-        "Пожалуйста, сдайте верхнюю одежду в гардероб.\n"
-        "Приглашаем вас в первый зал room_1")
-    return 1
+        f"Бот литератор поможет вам выучить стихотворение {TITLE} - {AUTHOR}\n"
+        f"Читать будем построчно. Я начинаю:\n"
+        f"{POEM[0]}")
+    context.user_data['count_line'] = 1
 
 
-async def repeat_text(update, context):
+async def suphler(update, context):
     await update.message.reply_text(
-        "Что вы имели ввиду?\n")
+        f"{POEM[context.user_data['count_line']]}")
 
 
-async def room_1(update, context):
+async def speech_bot(update, context):
+    if context.user_data['count_line'] == len(POEM):
+        context.user_data['count_line'] = 0
+        await update.message.reply_text(
+            "Вы справились!")
+        return
+    message = update.message.text
+    if message == POEM[context.user_data['count_line']]:
+        context.user_data['count_line'] += 1
+        if context.user_data['count_line'] == len(POEM):
+            context.user_data['count_line'] = 0
+            await update.message.reply_text(
+                "Вы справились!")
+            return
+        await update.message.reply_text(
+            f"{POEM[context.user_data['count_line']]}")
+        context.user_data['count_line'] += 1
+    else:
+        await update.message.reply_text(
+            f"Вы ошиблись. /suphler")
+
+
+async def stop(update, context):
+    context.user_data['count_line'] = 0
     await update.message.reply_text(
-        "В данном зале представлен скелет Мегаладона!\n"
-        "Проходите в следующий зал room_2\n"
-        "Или вы можете покинуть музей exit")
-    return 2
-
-
-async def room_2(update, context):
-    await update.message.reply_text(
-        "Представлена выставка дирижаблей. Имейте при себе огнетушитель!\n"
-        "Проходите в третий зал room_3\n")
-    return 3
-
-
-async def room_3(update, context):
-    await update.message.reply_text(
-        "Комната готической культуры. Надеюсь, у вас с собой чеснок...\n"
-        "Проходите в следующий зал room_4\n"
-        "Или, если вам надоело, вернитесь в первый зал room_1")
-    return 4
-
-
-async def room_4(update, context):
-    await update.message.reply_text(
-        "Экскурсия завершена. Здесь вы можете поесть тематической еды!\n"
-        "Возвращайтесь в первый зал room_1\n")
-    return 1
-
-
-async def exit(update, context):
-    await update.message.reply_text(
-        "Всего доброго, не забудьте забрать верхнюю одежду в гардеробе!")
-    return ConversationHandler.END
-
+        "До свидания")
 
 def main():
     application = Application.builder().token(BOT_TOKEN).build()
-    conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', start)],
 
-        states={
-            1: [MessageHandler(filters.TEXT & ~filters.COMMAND, repeat_text),
-                CommandHandler('room_1', room_1)],
-            2: [MessageHandler(filters.TEXT & ~filters.COMMAND, repeat_text),
-                CommandHandler('room_2', room_2)],
-            3: [MessageHandler(filters.TEXT & ~filters.COMMAND, repeat_text),
-                CommandHandler('room_3', room_3)],
-            4: [MessageHandler(filters.TEXT & ~filters.COMMAND, repeat_text),
-                CommandHandler('room_4', room_4),
-                CommandHandler('room_1', room_1)]
-        },
-
-        fallbacks=[CommandHandler('exit', exit)]
-    )
-
-    application.add_handler(conv_handler)
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, speech_bot))
+    application.add_handler(CommandHandler('suphler', suphler))
+    application.add_handler(CommandHandler('start', start))
+    application.add_handler(CommandHandler('stop', stop))
     application.run_polling()
 
 
